@@ -53,19 +53,21 @@ class MainSimulator(QMainWindow):
         )
 
     def do_evaluation(self, symbol: str):
+        tp = '1d' # Time Period
+        ti = '1m' # Time Interval
         ticker = yf.Ticker(symbol)
-        df_1m = ticker.history(period='1d', interval='1m')
+        df_raw = ticker.history(period=tp, interval=ti)
         try:
             title = '%s (%s)' % (ticker.info['longName'], symbol)
         except KeyError:
             title = symbol
-        df_1m = parabolic_sar_yahoo(df_1m)
 
+        df = parabolic_sar_yahoo(df_raw)
         # plot chart
-        self.chart.plot(df_1m, title)
+        self.chart.plot(df, title)
 
         # evaluation for buy/sell
-        obj = TradeSimulator(df_1m)
+        obj = TradeSimulator(df)
         obj.start()
 
     def on_ticker_selected(self, symbol: str):
