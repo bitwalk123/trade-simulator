@@ -3,6 +3,8 @@ from collections import deque
 import pandas as pd
 
 from funcs.tide import get_lunch_times
+from structs.enumtype import ChartType
+from tech.heikin import get_heikin_ashi
 
 
 class PSAR:
@@ -128,21 +130,44 @@ def parabolic_sar(df: pd.DataFrame):
     df['AF'] = indic.af_list
 
 
-def parabolic_sar_yahoo(df: pd.DataFrame) -> pd.DataFrame:
+def parabolic_sar_yahoo(df: pd.DataFrame, ctype: ChartType) -> pd.DataFrame:
     # Parabolic SAR for morning and afternoon separately
     dt_noon1, dt_noon2 = get_lunch_times(df)
-
     # Morning session
     df1 = df[df.index <= dt_noon1].copy()
-    parabolic_sar(df1)
-
     # Afternoon session
     df2 = df[df.index >= dt_noon2].copy()
-    if len(df2) > 2:
-        parabolic_sar(df2)
-        # conbine morning and afternoon data
-        df = pd.concat([df1, df2])
-    else:
-        df = df1
 
-    return df
+    if ctype == ChartType.CANDLE:
+        # Morning session
+        parabolic_sar(df1)
+
+        # Afternoon session
+        if len(df2) > 2:
+            parabolic_sar(df2)
+            # conbine morning and afternoon data
+            df = pd.concat([df1, df2])
+        else:
+            df = df1
+
+        return df
+    elif ctype == ChartType.HEIKIN:
+        df0 = pd.concat([df1, df2])[['Open', 'High', 'Low', 'Close']]
+        df = get_heikin_ashi(df0)
+        # Morning session
+        df1 = df[(df.index > df.index[0]) & (df.index <= dt_noon1)].copy()
+        parabolic_sar(df1)
+        print(df1)
+        # Afternoon session
+        df2 = df[df.index >= dt_noon2].copy()
+        # Afternoon session
+        if len(df2) > 2:
+            parabolic_sar(df2)
+            # conbine morning and afternoon data
+            df = pd.concat([df1, df2])
+        else:
+            df = df1
+
+        return df
+    else:
+        return pd.DataFrame()

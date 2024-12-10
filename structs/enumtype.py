@@ -1,6 +1,12 @@
 from enum import Enum
 
 
+class ChartType(Enum):
+    NONE = 0
+    CANDLE = 1
+    HEIKIN = 2
+
+
 class PositionType(Enum):
     UNKNOWN = 0
     NONE = 1
@@ -29,9 +35,3 @@ class TypeDeal(Enum):
     BUYSELL = 1
     TRANSACTION = 2
     FORCE = 3
-
-
-class XAxisRange(Enum):
-    DAY = 1
-    AM = 2
-    PM = 3

@@ -4,6 +4,7 @@ import yfinance as yf
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow
 
+from structs.info import SimInfo
 from tech.psar import parabolic_sar_yahoo
 from sim.sim_psar_01 import TradeSimulator
 from ui.dock import DockSimulator
@@ -22,9 +23,11 @@ class MainSimulator(QMainWindow):
         # title
         self.setWindowTitle('%s - %s' % (self.__appname__, self.__version__,))
 
+        info = SimInfo()
         # _____________________________________________________________________
         # Top toolbar
-        self.toolbar = toolbar = ToolBarSimulator()
+        self.toolbar = toolbar = ToolBarSimulator(info)
+        toolbar.clickedPlay.connect(self.on_redo_evaluation)
         self.addToolBar(
             Qt.ToolBarArea.TopToolBarArea,
             toolbar,
@@ -32,7 +35,7 @@ class MainSimulator(QMainWindow):
 
         # _____________________________________________________________________
         # monitor dock
-        self.dock = dock = DockSimulator()
+        self.dock = dock = DockSimulator(info)
         dock.tickerSelected.connect(self.on_ticker_selected)
         self.addDockWidget(
             Qt.DockWidgetArea.RightDockWidgetArea,
@@ -53,8 +56,8 @@ class MainSimulator(QMainWindow):
         )
 
     def do_evaluation(self, symbol: str):
-        tp = '1d' # Time Period
-        ti = '1m' # Time Interval
+        tp = '1d' # Time Period, fixed for day trading
+        ti = self.toolbar.getInterval() # Time Interval
         ticker = yf.Ticker(symbol)
         df_raw = ticker.history(period=tp, interval=ti)
         try:
@@ -62,7 +65,7 @@ class MainSimulator(QMainWindow):
         except KeyError:
             title = symbol
 
-        df = parabolic_sar_yahoo(df_raw)
+        df = parabolic_sar_yahoo(df_raw, self.toolbar.getChartType())
         # plot chart
         self.chart.plot(df, title)
 
@@ -72,3 +75,8 @@ class MainSimulator(QMainWindow):
 
     def on_ticker_selected(self, symbol: str):
         self.do_evaluation(symbol)
+
+    def on_redo_evaluation(self):
+        symbol = self.dock.getTickerSelected()
+        if symbol is not None:
+            self.do_evaluation(symbol)
