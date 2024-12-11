@@ -31,10 +31,12 @@ class SpinBox(QSpinBox):
         super().__init__(*args)
         self.setAlignment(Qt.AlignmentFlag.AlignRight)
 
+
 class SpinBoxFloat(QDoubleSpinBox):
     def __init__(self, *args):
         super().__init__(*args)
         self.setAlignment(Qt.AlignmentFlag.AlignRight)
+
 
 class TickerButton(QPushButton):
     def __init__(self, *args):
