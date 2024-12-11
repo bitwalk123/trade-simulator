@@ -139,35 +139,47 @@ def parabolic_sar_yahoo(df: pd.DataFrame, ctype: ChartType) -> pd.DataFrame:
     df2 = df[df.index >= dt_noon2].copy()
 
     if ctype == ChartType.CANDLE:
-        # Morning session
-        parabolic_sar(df1)
-
-        # Afternoon session
-        if len(df2) > 2:
-            parabolic_sar(df2)
-            # conbine morning and afternoon data
-            df = pd.concat([df1, df2])
-        else:
-            df = df1
-
-        return df
+        return psar_yahoo_candle(df1, df2)
     elif ctype == ChartType.HEIKIN:
-        df0 = pd.concat([df1, df2])[['Open', 'High', 'Low', 'Close']]
-        df = get_heikin_ashi(df0)
-        # Morning session
-        df1 = df[(df.index > df.index[0]) & (df.index <= dt_noon1)].copy()
-        parabolic_sar(df1)
-        print(df1)
-        # Afternoon session
-        df2 = df[df.index >= dt_noon2].copy()
-        # Afternoon session
-        if len(df2) > 2:
-            parabolic_sar(df2)
-            # conbine morning and afternoon data
-            df = pd.concat([df1, df2])
-        else:
-            df = df1
-
-        return df
+        return psar_yahoo_heikin(df1, df2)
     else:
         return pd.DataFrame()
+
+
+def psar_yahoo_candle(df1, df2):
+    # Morning session
+    parabolic_sar(df1)
+
+    # Afternoon session
+    if len(df2) > 2:
+        parabolic_sar(df2)
+        # conbine morning and afternoon data
+        df = pd.concat([df1, df2])
+    else:
+        df = df1
+
+    return df
+
+
+def psar_yahoo_heikin(df1, df2):
+    df_raw = pd.concat([df1, df2])[['Open', 'High', 'Low', 'Close']]
+    df = get_heikin_ashi(df_raw)
+    dt_noon1, dt_noon2 = get_lunch_times(df)
+
+    # First Rwa is always NaN
+    df0 = df[df.index == df.index[0]].copy()
+
+    # Morning session
+    df1 = df[(df.index > df.index[0]) & (df.index <= dt_noon1)].copy()
+    parabolic_sar(df1)
+
+    # Afternoon session
+    df2 = df[df.index >= dt_noon2].copy()
+    if len(df2) > 2:
+        parabolic_sar(df2)
+        # conbine morning and afternoon data
+        df = pd.concat([df0, df1, df2])
+    else:
+        df = pd.concat([df0, df1])
+
+    return df
