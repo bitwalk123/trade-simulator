@@ -24,8 +24,10 @@ class TradeSimulator(QObject):
         super().__init__()
         self.df = df
         self.info = info
+
         # 前場と後場で分ける
         self.dt_noon1, self.dt_noon2 = get_lunch_times(df)
+
         # 収益（グローバル）
         self.earning = 0
 
@@ -33,6 +35,7 @@ class TradeSimulator(QObject):
         """
         ループ処理
         一行ずつデータフレームを読み込んで処理する
+
         :param df:
         :return:
         """

@@ -12,7 +12,6 @@ from widgets.buttons import (
 )
 from widgets.combos import ComboBox
 from widgets.labels import LabelRight
-from widgets.pads import HPad
 from widgets.toolbars import ToolBar
 
 
