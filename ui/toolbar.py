@@ -28,10 +28,12 @@ class ToolBarSimulator(ToolBar):
         self.addWidget(lab_chart)
 
         self.rb_ctype_group = rb_ctype_group = ButtonGroup()
+        rb_ctype_group.buttonToggled.connect(self.on_chart_type_changed)
 
         rb_candle = RadioButtonChartType('ローソク足')
         rb_candle.setChartType(ChartType.CANDLE)
         rb_candle.setChecked(True)
+        info.setChartType(rb_candle.getChartType())
         rb_ctype_group.addButton(rb_candle)
         self.addWidget(rb_candle)
 
@@ -103,6 +105,10 @@ class ToolBarSimulator(ToolBar):
     def getInterval(self):
         key_interval = self.combo_interval.currentText()
         return self.info.getIntervalValue(key_interval)
+
+    def on_chart_type_changed(self, rb: RadioButtonChartType, state: bool):
+        if state:
+            self.info.setChartType(rb.getChartType())
 
     def on_losscut_changed(self, mag: int):
         self.info.setLossCutMag(mag)

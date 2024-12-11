@@ -43,7 +43,7 @@ class TradeSimulator(QObject):
         credit = CreditVault()
 
         # ロスカット
-        losscut = get_losscut(df, credit, mag=self.info.getLossCutMag())
+        losscut = get_losscut(df, credit, self.info.getLossCutMag(), self.info)
         level_profit = self.info.getFixProfitLevel()
         print(
             '（ロスカット = %+.1f, 利確レベル = %.1f）' % (losscut, level_profit)
@@ -59,7 +59,7 @@ class TradeSimulator(QObject):
         for r in range(n - 1):
             # -----------------------------------------------------------------
             # ループ処理の開始
-            dt, price, trend, psar = get_row_data(df, r)
+            dt, price, trend, psar = get_row_data(df, r, self.info)
             # 含益
             _, gain = credit.getProfit(price)
             # トレンド転換かどうかの確認
@@ -133,7 +133,7 @@ class TradeSimulator(QObject):
         # _____________________________________________________________________
         # 最後の行で強制決済
         r = n - 1
-        dt, price, trend, _ = get_row_data(df, r)
+        dt, price, trend, _ = get_row_data(df, r, self.info)
         if credit.hasPosition():
             action, delta = credit.repayment(price)
             print('%s %s %.1f %+.1f （強制決済）' % (dt, action, price, delta))

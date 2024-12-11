@@ -2,6 +2,7 @@ import os
 from dataclasses import dataclass
 
 from funcs.common import read_json
+from structs.enumtype import ChartType
 from structs.res import AppRes
 
 
@@ -22,11 +23,17 @@ class SimInfo:
         info_tick = 'tick_price.csv'
         self.tick_file = os.path.join(res.getInfoDir(), info_tick)
 
+        # チャートタイプ
+        self.ctype = ChartType.NONE
+
         # ロスカットの倍率
         self.mag = 5
 
         # 利益確定レベル
         self.fix_profit_level = 0.8
+
+    def getChartType(self) -> ChartType:
+        return self.ctype
 
     def getFixProfitLevel(self) -> float:
         return self.fix_profit_level
@@ -48,6 +55,9 @@ class SimInfo:
 
     def getTickerValue(self, key: str) -> str:
         return self.dict_ticker[key]
+
+    def setChartType(self, ctype: ChartType):
+        self.ctype = ctype
 
     def setFixProfitLevel(self, level: float):
         self.fix_profit_level = level

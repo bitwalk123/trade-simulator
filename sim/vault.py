@@ -26,6 +26,16 @@ class CreditVault:
         if delta > self.profit_max:
             self.profit_max = delta
 
+        # DEBUG
+        """
+        if delta - int(delta) > 0:
+            print(
+                '### 建玉 %f, 現在価格 %f, 株数 %f, 含損益 %f' % (
+                    self.price, price_now, self.unit, delta
+                )
+            )
+        """
+
         return action, delta
 
     def getProfitMax(self) -> float:
@@ -43,13 +53,12 @@ class CreditVault:
         :return:
         """
         self.position_type = PositionType.NONE
-
         self.init_position_common()
 
     def init_position_common(self):
         self.price = 0.0
-        self.unit = 100
-        self.profit_max = 0
+        self.unit = 100.0
+        self.profit_max = 0.0
 
     def init_position_for_wait(self):
         """
