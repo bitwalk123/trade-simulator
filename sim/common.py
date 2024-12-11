@@ -4,7 +4,7 @@ import pandas as pd
 from sim.vault import CreditVault
 from structs.enumtype import (
     PositionType,
-    TrendType,
+    TrendType, ChartType,
 )
 from structs.info import SimInfo
 
@@ -31,18 +31,24 @@ def is_same_psar_trend(credit: CreditVault, trend: int) -> TrendType:
         return TrendType.NONE
 
 
-def get_losscut(df: pd.DataFrame, credit: CreditVault, mag: int = 5) -> float:
-    price_mean = df['Close'].mean()
+def get_losscut(df: pd.DataFrame, credit: CreditVault, mag: int, info: SimInfo) -> float:
+    if info.getChartType() == ChartType.HEIKIN:
+        price_mean = df['Price'].mean()
+    else:
+        price_mean = df['Close'].mean()
     df_tick = pd.read_csv(SimInfo().getTickFile())
     tick = df_tick[df_tick['Price'] > price_mean].head(1)['TOPIX'].iloc[0]
     losscut = -tick * mag * credit.unit
     return losscut
 
 
-def get_row_data(df: pd.DataFrame, r: int):
+def get_row_data(df: pd.DataFrame, r: int, info: SimInfo):
     series = df.iloc[r]
     dt = series.name
-    price = series['Close']
+    if info.getChartType() == ChartType.HEIKIN:
+        price = series['Price']
+    else:
+        price = series['Close']
     trend = series['Trend']
     psar = series['PSAR']
     return dt, price, trend, psar

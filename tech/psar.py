@@ -163,7 +163,14 @@ def psar_yahoo_candle(df1, df2):
 
 def psar_yahoo_heikin(df1, df2):
     df_raw = pd.concat([df1, df2])[['Open', 'High', 'Low', 'Close']]
+    """
+    平均足の終値は実価格ではないため、
+    元の終値を控えておき、'Price' という列名で追加しておく。
+    """
+    close_price = df_raw['Close']
     df = get_heikin_ashi(df_raw)
+    df['Price'] = close_price
+
     dt_noon1, dt_noon2 = get_lunch_times(df)
 
     # First Rwa is always NaN

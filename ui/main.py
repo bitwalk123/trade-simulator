@@ -66,7 +66,7 @@ class MainSimulator(QMainWindow):
         except KeyError:
             title = symbol
 
-        df = parabolic_sar_yahoo(df_raw, self.toolbar.getChartType())
+        df = parabolic_sar_yahoo(df_raw, self.info.getChartType())
         # plot chart
         self.chart.plot(df, title)
 
