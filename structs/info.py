@@ -22,11 +22,23 @@ class SimInfo:
         info_tick = 'tick_price.csv'
         self.tick_file = os.path.join(res.getInfoDir(), info_tick)
 
+        # ロスカットの倍率
+        self.mag = 5
+
+        # 利益確定レベル
+        self.fix_profit_level = 0.8
+
+    def getFixProfitLevel(self) -> float:
+        return self.fix_profit_level
+
     def getIntervalKeys(self) -> list:
         return list(self.dict_interval.keys())
 
     def getIntervalValue(self, key: str) -> str:
         return self.dict_interval[key]
+
+    def getLossCutMag(self) -> int:
+        return self.mag
 
     def getTickFile(self) -> str:
         return self.tick_file
@@ -36,3 +48,9 @@ class SimInfo:
 
     def getTickerValue(self, key: str) -> str:
         return self.dict_ticker[key]
+
+    def setFixProfitLevel(self, level: float):
+        self.fix_profit_level = level
+
+    def setLossCutMag(self, mag: int):
+        self.mag = mag

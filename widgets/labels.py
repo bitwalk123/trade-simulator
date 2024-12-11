@@ -10,11 +10,13 @@ class Label(QLabel):
 class LabelRight(Label):
     def __init__(self, *args):
         super().__init__(*args)
+        # self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Plain)
+        # self.setLineWidth(2)
         self.setAlignment(
             Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
         )
         self.setStyleSheet("""
             QLabel {
-                padding: 0 1em 0 0.2em;
+                padding: 0 0.1em 0 0.5em;
             }
         """)

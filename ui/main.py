@@ -23,7 +23,7 @@ class MainSimulator(QMainWindow):
         # title
         self.setWindowTitle('%s - %s' % (self.__appname__, self.__version__,))
 
-        info = SimInfo()
+        self.info = info = SimInfo()
         # _____________________________________________________________________
         # Top toolbar
         self.toolbar = toolbar = ToolBarSimulator(info)
@@ -71,7 +71,7 @@ class MainSimulator(QMainWindow):
         self.chart.plot(df, title)
 
         # evaluation for buy/sell
-        obj = TradeSimulator(df)
+        obj = TradeSimulator(df, self.info)
         obj.start()
 
     def on_ticker_selected(self, symbol: str):
