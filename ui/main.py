@@ -56,10 +56,11 @@ class MainSimulator(QMainWindow):
         )
 
     def do_evaluation(self, symbol: str):
-        tp = '1d' # Time Period, fixed for day trading
-        ti = self.toolbar.getInterval() # Time Interval
+        tp = '1d'  # Time Period, fixed for day trading
+        ti = self.toolbar.getInterval()  # Time Interval
         ticker = yf.Ticker(symbol)
         df_raw = ticker.history(period=tp, interval=ti)
+        # print(df_raw)
         try:
             title = '%s (%s)' % (ticker.info['longName'], symbol)
         except KeyError:
