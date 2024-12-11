@@ -1,8 +1,9 @@
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QButtonGroup,
     QPushButton,
     QRadioButton,
-    QToolButton,
+    QToolButton, QSpinBox, QDoubleSpinBox,
 )
 
 from structs.enumtype import ChartType
@@ -18,13 +19,22 @@ class RadioButtonChartType(QRadioButton):
         super().__init__(*args)
         self.ctype = ChartType.NONE
 
-    def getChartType(self)->ChartType:
+    def getChartType(self) -> ChartType:
         return self.ctype
 
     def setChartType(self, ctype: ChartType):
         self.ctype = ctype
 
 
+class SpinBox(QSpinBox):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+class SpinBoxFloat(QDoubleSpinBox):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.setAlignment(Qt.AlignmentFlag.AlignRight)
 
 class TickerButton(QPushButton):
     def __init__(self, *args):

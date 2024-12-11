@@ -13,15 +13,17 @@ from structs.enumtype import (
     PositionType,
     TrendType,
 )
+from structs.info import SimInfo
 
 
 class TradeSimulator(QObject):
     __name__ = 'SIM_PSAR_01'
-    __version__ = '0.0.4'
+    __version__ = '0.0.5'
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame, info: SimInfo):
         super().__init__()
         self.df = df
+        self.info = info
         # 前場と後場で分ける
         self.dt_noon1, self.dt_noon2 = get_lunch_times(df)
         # 収益（グローバル）
@@ -38,8 +40,11 @@ class TradeSimulator(QObject):
         credit = CreditVault()
 
         # ロスカット
-        losscut = get_losscut(df, credit, mag=5)
-        print('（ロスカット = %+.1f）' % losscut)
+        losscut = get_losscut(df, credit, mag=self.info.getLossCutMag())
+        level_profit = self.info.getFixProfitLevel()
+        print(
+            '（ロスカット = %+.1f, 利確レベル = %.1f）' % (losscut, level_profit)
+        )
 
         # 収益（ローカル）
         earning = 0
@@ -83,7 +88,7 @@ class TradeSimulator(QObject):
                             )
                         )
                         earning += delta
-                    elif (profit_max > 0) and (gain < profit_max * 0.8):
+                    elif (profit_max > 0) and (gain < profit_max * level_profit):
                         # 利確
                         action, delta = credit.repayment(price, reversal=False)
                         print(
