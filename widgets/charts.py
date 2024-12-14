@@ -27,7 +27,7 @@ class ChartSimulator(FigureCanvas):
         self.fig.subplots_adjust(
             top=0.95,
             bottom=0.05,
-            left=0.065,
+            left=0.07,
             right=0.995,
         )
         self.ax = self.fig.add_subplot(111)
